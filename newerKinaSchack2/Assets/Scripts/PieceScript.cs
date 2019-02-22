@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class PieceScript : MonoBehaviour
 {
-    
+    ~PieceScript()
+    {
+        print("byeee");
+        if (nodes != null)
+            nodes.piece = null;
+    }
 
     public NodeScript nodes;
     public Colour collr;

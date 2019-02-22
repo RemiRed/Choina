@@ -165,7 +165,9 @@ public class TranslatorScript : MonoBehaviour
             case Colour.red:
                 if (thisPic >= ext.redPic.Count)
                 {
-                    print("för lång penis");
+                    print(thisPic);
+                    print(ext.redPic.Count);
+                    print("för lång ");
                 }
                 aNode.piece = ext.redPic[thisPic];
                 ext.redPic[thisPic].nodes = aNode;

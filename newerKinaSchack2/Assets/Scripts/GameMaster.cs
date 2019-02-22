@@ -267,7 +267,7 @@ public class PLayer
     public List<Piece> myPieces = new List<Piece>();
 }
 
-public class Board
+public class Board : MonoBehaviour
 {
     B[,] boarde = new B[17, 17]
     {
@@ -416,6 +416,23 @@ public class Board
     }
     void CreateAPiece(int playa, Colour deColr)
     {
+        B[,] board2use = FindObjectOfType<ADumbScript>().Board2 != null ? FindObjectOfType<ADumbScript>().Board2 : FindObjectOfType<ADumbScript>().Board;
+
+        for (int i = 0; i < board2use.GetLength(0); i++)
+        {
+            for (int j = 0; j < board2use.GetLength(1); j++)
+            {
+                if (board2use[i, j] != B.n && board2use[i, j] != B.e)
+                {
+                    board[i, j].piece = new Piece();
+                    board[i, j].piece.player = playa;
+                    board[i, j].piece.node = board[i, j];
+                    allPieces.Add(board[i, j].piece);
+                    print("test");
+                }
+            }
+        }
+        /*
         for (int i = 0; i < board.GetLength(0); i++)
         {
             for (int j = 0; j < board.GetLength(1); j++)
@@ -433,7 +450,9 @@ public class Board
 
             }
         }
+        */
     }
+
     public List<Node> FindPositions(Node theNode, bool first, List<Node> nodeas)
     {
         foreach (AdjacentNodes nodes in theNode.nodePals)

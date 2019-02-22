@@ -31,10 +31,15 @@ public class ADumbScript : MonoBehaviour
         {B.n,B.n,B.n,B.n,B.g,B.g,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n},
         {B.n,B.n,B.n,B.n,B.g,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n,B.n}
 };
+    public B[,] Board
+    {
+        get { return board; }
+    }
+
     public B[,] Board2
     {
+        get { return board2; }
         set
-
         {
             if (value != null)
             {
@@ -45,8 +50,8 @@ public class ADumbScript : MonoBehaviour
     }
     // a list over the boards nodes and the pieces the player has.
 
-    public NodeScript[,] rBoard = new NodeScript[17, 17];
-    public PieceScript[,] Rpiece = new PieceScript[17, 17];
+    public NodeScript[,] rBoard = new NodeScript[17, 13];
+    public PieceScript[,] Rpiece = new PieceScript[17, 13];
 
     public GameObject piece;
     public GameObject node;
@@ -63,8 +68,8 @@ public class ADumbScript : MonoBehaviour
     // The form of the board.
 
     int[] boardForm = new int[17] { 1, 2, 3, 4, 13, 12, 11, 10, 9, 10, 11, 12, 13, 4, 3, 2, 1 };
-    GameObject[,] nodes = new GameObject[17, 13];
-    GameObject[,] pieces = new GameObject[17, 13];
+    GameObject[,] nodes = new GameObject[17, 17];
+    GameObject[,] pieces = new GameObject[17, 17];
 
     int players;
 
@@ -131,29 +136,30 @@ public class ADumbScript : MonoBehaviour
 
         // the internal part, everything that happends within the code.
         InternalBoard();
-        
-        for (int i = 0; i < nodes.GetLength(0); i++)
 
+        B[,] board2use = board2 != null ? board2 : board;
+        for (int i = 0; i < board2use.GetLength(0); i++)
         {
-            for (int j = 0; j < nodes.GetLength(1); j++)
+            for (int j = 0, counting = 0; j < board2use.GetLength(1); j++)
             {
-                if (nodes[i, j] != null && nodes[i, j].GetComponent<NodeScript>().clr != Colour.none)
+                if (counting > 12)
+                    counting = 12;
+                if (board2use[i, j] != B.e && board2use[i, j] != B.n)
                 {
-                    pieces[i, j] = Instantiate(piece, new Vector3(nodes[i, j].transform.position.x, 0, nodes[i, j].transform.position.z), Quaternion.identity);
+                    pieces[i, counting] = Instantiate(piece, new Vector3(nodes[i, counting].transform.position.x, 0, nodes[i, counting].transform.position.z), Quaternion.identity);
+
                 }
-
-
+                if (board2use[i, j] != B.n)
+                {
+                    counting++;
+                }
             }
         }
 
-
-
-
-        // calling the methods to the external board.
+        // calling the methods to the external board.        
         InternalPieces();
         CreatePlayers();
         FindNodes();
-
     }
 
     // Just a method that creates the players. Depending on the ammount, certian cases with the correct layout will be shown.
@@ -194,64 +200,79 @@ public class ADumbScript : MonoBehaviour
             {
                 if (pieces[i, j] != null)
                 {
-
                     if (!wichOne.Contains(pieces[i, j].GetComponent<PieceScript>().playa))
                     {
-                        nodes[i, j].GetComponent<NodeScript>().piece = null;
+                        //nodes[i, j].GetComponent<NodeScript>().piece = null;
                         Destroy(pieces[i, j]);
                     }
                 }
-
             }
-
         }
     }
-    // The code "game", this creates the board within the code so whenever the player visually sees the board one is also created at the same time.  
+
+    //The code "game", this creates the board within the code so whenever the player visually sees the board one is also created at the same time.  
     void InternalBoard()
     {
         int counting;
-        for (int i = 0; i < board.GetLength(0); i++)
+        B[,] board2use = board2 != null ? board2 : board;
+        for (int i = 0; i < board2use.GetLength(0); i++)
         {
             counting = 0;
-            for (int j = 0; j < board.GetLength(1); j++)
+            for (int j = 0; j < board2use.GetLength(1); j++)
             {
-                if (board[i, j] != B.n)
+                if (board2use[i, j] != B.n)
                 {
                     // This part paint each node.
-                    switch (board[i, j])
+                    switch (board2use[i, j])
                     {
                         case B.e:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
                             counting++;
                             break;
                         case B.r:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.red;
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.red;
                             counting++;
                             break;
                         case B.b:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.blue;
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.blue;
                             counting++;
                             break;
                         case B.g:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.green;
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.green;
                             counting++;
                             break;
                         case B.d:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.black;
+                            if (i >= rBoard.GetLength(0))
+                            {
+                                print("rboardi");
+                            }
+                            if (j >= rBoard.GetLength(1))
+                            {
+                                print("rboardj");
+                            }
+                            if (i >= nodes.GetLength(0))
+                            {
+                                print("nodesi");
+                            }
+                            if (j >= nodes.GetLength(1))
+                            {
+                                print("nodesj");
+                            }
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.black;
                             counting++;
                             break;
                         case B.y:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.yellow;
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.yellow;
                             counting++;
                             break;
                         case B.w:
-                            rBoard[i, j] = nodes[i, counting].GetComponent<NodeScript>();
-                            rBoard[i, j].clr = Colour.white;
+                            rBoard[i, counting] = nodes[i, counting].GetComponent<NodeScript>();
+                            rBoard[i, counting].clr = Colour.white;
                             counting++;
                             break;
                     }
@@ -281,7 +302,7 @@ public class ADumbScript : MonoBehaviour
                     counting = 12;
                 if (rBoard[i, j] != null)
                 {
-                    if (rBoard[i, j].clr != Colour.none)
+                    if ((rBoard[i, j].clr != Colour.none || (board2use[i, j] != B.e && board2use[i, j] != B.n)) && pieces[i, counting] != null && pieces[i, counting].GetComponent<PieceScript>() != null)
                     {
                         // This part paints each piece. 
                         switch (board2use[i, j])
@@ -289,6 +310,7 @@ public class ADumbScript : MonoBehaviour
                             case B.r:
                                 Rpiece[i, j] = pieces[i, counting].GetComponent<PieceScript>();
                                 CreatePieces(Colour.red, 1, Rpiece[i, j], rBoard[i, j]);
+                                print("hello");
                                 redPic.Add(Rpiece[i, j]);
                                 break;
                             case B.g:
